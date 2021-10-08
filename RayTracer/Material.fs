@@ -1,5 +1,6 @@
 namespace rec RayTracer.Material
 
+open System.Runtime.CompilerServices
 open RayTracer
 open RayTracer.Texture
 
@@ -43,7 +44,7 @@ type Diffuse<'t when 't :> ITexture> (albedo : 't) =
         override this.emitted _ _ _ = Vec3d.zero
         
 
-type Metal<'t when 't :> ITexture> (albedo : 't, fuzz) =
+type Metal<'t when 't :> ITexture> (albedo : 't, fuzz : double) =
     inherit Material () with
         override this.scatter(rayIn, hitRecord) =
             let reflected = rayIn.direction.normalized.reflect(hitRecord.normal)

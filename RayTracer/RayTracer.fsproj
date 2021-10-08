@@ -20,9 +20,13 @@
     <Compile Include="Texture.fs" />
     <Compile Include="Material.fs" />
     <Compile Include="Intersectable.fs" />
+	<Compile Include="Sphere.fs" />
+	<Compile Include="Acceleration\IntersectionAccumulator.fs" />
     <Compile Include="Acceleration\BVH.fs" />
     <Compile Include="Render.fs" />
+    <Compile Include="RenderResult.fs" />
     <Compile Include="Scene.fs" />
+    <Compile Include="Samples.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
