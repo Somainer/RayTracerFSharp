@@ -1,4 +1,3 @@
-#nowarn "9"
 namespace rec RayTracer.Acceleration.BVH
 
 open System
@@ -10,7 +9,7 @@ open System.Collections.Generic
 open RayTracer.Material
 open Microsoft.FSharp.NativeInterop
 
-type TCandidates = HitRecord MutableArraySegment
+type TCandidates = IntersectionAccumulator
 
 type BVH = {
     root: BVHTree
@@ -19,16 +18,10 @@ type BVH = {
     interface IIntersectable with
         member this.boundingBox _ _ = Some this.root.bounds
         member this.intersect(ray, tMin, tMax) =
-            let candidatesPtr =
-                this.size
-                |> NativePtr.stackalloc<HitRecord>
-                |> NativePtr.toVoidPtr
-                
-            let span = Span(candidatesPtr, this.size)
-            let candidates = MutableArraySegment(span)
+            let candidates = TCandidates()
             
             BVHTree.getIntersectCandidates(this.root, &ray, tMin, tMax, &candidates)
-            BVHTree.mergeIntersections(&ray, &candidates, tMin, tMax)
+            candidates.Result
 
 type BVHTree =
     | Leaf of bounds : AABB * object : IIntersectable
@@ -51,20 +44,6 @@ module BVHTree =
             if bounds.isIntersect(&ray, tMin, tMax) then
                 getIntersectCandidates(left, &ray, tMin, tMax, &candidates)
                 getIntersectCandidates(right, &ray, tMin, tMax, &candidates)
-
-    let mergeIntersections (ray : Ray inref, candidates : TCandidates inref, tMin, tMax) =
-        let span = candidates.Span
-        let mutable result = ValueNone
-        for intersect in span do
-            match intersect with
-            | intersect when result.IsNone ->
-                result <- ValueSome intersect
-            | candidate ->
-                let last = result.Value
-                if intersect.t < last.t then
-                    result <- ValueSome candidate
-        
-        result
         
 module BVH =
     let private getLeaves (list : IIntersectable[]) tMin tMax =
