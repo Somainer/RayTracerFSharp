@@ -47,7 +47,7 @@ type Triangle (v0, v1, v2) =
                         {
                             HitRecord.t = time
                             u = u; v = v; point = point
-                            materialId = Material.Dummy.InstanceId
+                            material = Material.Dummy
                             normal = normal
                         }
                     )

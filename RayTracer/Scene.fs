@@ -27,8 +27,8 @@ type Scene = {
             color <- color + self.renderSingle bvh i j
         color / double self.spp
         
-//    member self.bvh = BVH.create self.objects self.camera.shutterOpen self.camera.shutterClose
-    member self.bvh = IntersectableList self.objects
+    member self.bvh = BVH.create self.objects self.camera.shutterOpen self.camera.shutterClose
+//    member self.bvh = IntersectableList self.objects
     
     member self.renderSequential () =
         let watch = Stopwatch.StartNew()

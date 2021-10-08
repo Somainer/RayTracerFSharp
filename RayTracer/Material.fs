@@ -10,13 +10,12 @@ type HitRecord = {
     normal: Vec3d
     t: double
     u: double; v: double
-    materialId: int
-} with
-    member self.material = ObjectPool.Find self.materialId :?> Material
+    material: Material
+}
 module HitRecord =
     let inline withMaterial (material : Material) record =
         { record with
-            materialId = material.InstanceId
+            material = material
         }
 
 [<AbstractClass>]

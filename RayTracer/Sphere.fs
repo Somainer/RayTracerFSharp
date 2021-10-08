@@ -26,7 +26,7 @@ type Sphere (origin, radius, material : Material) =
                         HitRecord.t = root
                         point = point; u = u; v = v
                         normal = outwardNormal
-                        materialId = material.InstanceId
+                        material = material
                     })
     
 
