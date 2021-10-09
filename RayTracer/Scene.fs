@@ -5,6 +5,7 @@ open System.Diagnostics
 open System.Threading.Tasks
 open System.Linq
 open RayTracer.Acceleration.BVH
+open RayTracer.Colors
 open RayTracer.Intersectable
 
 type Scene = {
@@ -82,3 +83,22 @@ type Scene = {
           spp = self.spp
           pixels = buf
         }
+        
+    member self.RenderWithCallback (callback : Action<int, int, Color>) (doneCallback : Color3d[] Action) =
+        let bvh = self.bvh
+        
+        let image = Array2D.create self.height self.width Vec3d.zero
+        let watch = Stopwatch.StartNew()
+        Parallel.For(0, self.height,
+            Action<_> (fun j ->
+                Parallel.For(0, self.width,
+                    Action<_> (fun i ->
+                        let pixel =
+                            self.sampledRenderSingle bvh i j
+                        let color = Color.correctedColor pixel
+                        Array2D.set image j i pixel
+                        callback.Invoke(j, i, color)
+                )) |> ignore)) |> ignore
+
+        doneCallback.Invoke(image.Cast() |> Array.ofSeq)
+        printfn $"Render completed in {watch.Elapsed}"
