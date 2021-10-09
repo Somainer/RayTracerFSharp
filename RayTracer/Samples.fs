@@ -25,7 +25,7 @@ let randomScene () =
     let lookAt = Vec3d.make 0.0 0.0 0.0
     let vup = Vec3d.make 0.0 1.0 0.0
     let distToFocus = 10.0
-    let aperture = 0.1
+    let aperture = 0.0
     
     let cam = Camera.create lookFrom lookAt vup ratio (Angle.Degree 20.0) aperture distToFocus 0.0 0.0
     let background = Vec3d.make 0.7 0.8 1.0

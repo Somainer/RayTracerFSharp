@@ -18,17 +18,13 @@ type Sphere (origin, radius, material : Material) =
             let radiusVec = Vec3d.only radius
             Some (AABB(origin - radiusVec, origin + radiusVec))
         member self.intersect(ray, tMin, tMax) =
-            Sphere.solveSphereEquation &ray origin radius tMin tMax
-            |> ValueOption.map
-                (fun struct (root, point, outwardNormal) ->
-                    let struct (u, v) = self.sphereUV outwardNormal
-                    {
-                        HitRecord.t = root
-                        point = point; u = u; v = v
-                        normal = outwardNormal
-                        material = material
-                    })
-    
+            match Sphere.solveSphereEquation &ray origin radius tMin tMax with
+            | ValueNone -> ValueNone
+            | ValueSome struct (root, point, outwardNormal) ->
+                let struct (u, v) = self.sphereUV outwardNormal
+                HitRecord.newWithFaceNormal root point u v outwardNormal material &ray
+                |> ValueSome
+
 
 module Sphere =
     let solveSphereEquation (ray : Ray inref) center radius tMin tMax =

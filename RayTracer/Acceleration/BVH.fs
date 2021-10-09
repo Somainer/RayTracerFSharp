@@ -18,7 +18,7 @@ type BVH = {
     interface IIntersectable with
         member this.boundingBox _ _ = Some this.root.bounds
         member this.intersect(ray, tMin, tMax) =
-            let candidates = TCandidates()
+            let mutable candidates = TCandidates()
             
             BVHTree.getIntersectCandidates(this.root, &ray, tMin, tMax, &candidates)
             candidates.Result
@@ -33,7 +33,7 @@ type BVHTree =
         | Branch (bounds = bounds) -> bounds
     
 module BVHTree =
-    let rec getIntersectCandidates (tree, ray : Ray inref, tMin, tMax, candidates : TCandidates inref) =
+    let rec getIntersectCandidates (tree, ray : Ray inref, tMin, tMax, candidates : TCandidates byref) =
         match tree with
         | Leaf (bounds, object) -> 
             if bounds.isIntersect(&ray, tMin, tMax) then

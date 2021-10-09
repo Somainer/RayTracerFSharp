@@ -16,9 +16,9 @@ type AABB (minimum, maximum) =
             let candidate0 = (minimum.[axis] - origin.[axis]) * invDirection
             let candidate1 = (maximum.[axis] - origin.[axis]) * invDirection
             let t0 = Math.Min(candidate0, candidate1)
-            let t1 = Math.Min(candidate0, candidate1)
+            let t1 = Math.Max(candidate0, candidate1)
             tMin <- Math.Max(t0, tMin)
-            tMax <- Math.Max(t1, tMax)
+            tMax <- Math.Min(t1, tMax)
             // If tMax <= tMin then no intersection
             tMax > tMin
         
@@ -32,7 +32,7 @@ type AABB (minimum, maximum) =
 
     member self.surroundWith (that : AABB) =
         let small = Vec3d.elementwiseMin self.Minimum that.Minimum
-        let big = Vec3d.elementwiseMax self.Minimum that.Maximum
+        let big = Vec3d.elementwiseMax self.Maximum that.Maximum
         AABB (small, big)
         
     static member surround (this : AABB) that =

@@ -69,7 +69,7 @@ type Scene = {
                             Array2D.set image j i (self.sampledRenderSingle bvh i j))
                     ) |> ignore
                     let completed = Threading.Interlocked.Increment(&finishCount)
-                    Console.WriteLine("{0:P} Completed", double completed / double self.height)))
+                    Console.Write("{0:P} Completed\r", double completed / double self.height)))
         ignore result
         Console.WriteLine("Rendering completed in {0}", watch.Elapsed.ToString())
         let buf =

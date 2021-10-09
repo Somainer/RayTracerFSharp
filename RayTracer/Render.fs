@@ -13,6 +13,6 @@ let rec traceRay (ray : Ray inref) (world : #IIntersectable) (background : Color
             let emitted = material.emitted intersect.u intersect.v intersect.point
             match material.scatter(&ray, &intersect) with
             | ValueNone -> emitted
-            | ValueSome (color, scattered) ->
+            | ValueSome struct (color, scattered) ->
                 let scatteredColor = traceRay &scattered world background (maxDepth - 1)
                 emitted + color * scatteredColor

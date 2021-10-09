@@ -17,6 +17,17 @@ module HitRecord =
         { record with
             material = material
         }
+        
+    let inline newWithFaceNormal t point u v outwardNormal material (ray : _ inref) =
+        let frontFace = ray.direction.dot outwardNormal < 0.0
+        let normal = if frontFace then outwardNormal else -outwardNormal
+        {
+            point = point
+            normal = normal
+            t = t
+            u = u; v = v
+            material = material
+        }
 
 [<AbstractClass>]
 type Material () =
@@ -28,7 +39,7 @@ type Diffuse<'t when 't :> ITexture> (albedo : 't) =
     inherit Material () with
         override this.scatter(rayIn, hitRecord) =
             let scatterDirection =
-                match hitRecord.normal + Vec3d.randomInUnitDisk().normalized with
+                match hitRecord.normal + Vec3d.randomInUnitSphere().normalized with
                 | m when m.nearZero -> hitRecord.normal
                 | m -> m
                 
