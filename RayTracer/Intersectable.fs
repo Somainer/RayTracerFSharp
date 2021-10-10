@@ -43,13 +43,13 @@ type Triangle (v0, v1, v2) =
                     point
                     |> this.barycentricCoordinate
                     |> ValueOption.map (
-                        fun struct (_, u, v) -> 
-                        {
-                            HitRecord.t = time
-                            u = u; v = v; point = point
-                            material = Material.Dummy
-                            normal = normal
-                        }
+                        fun struct (_, u, v) ->
+                            {
+                                HitRecord.t = time
+                                u = u; v = v; point = point
+                                material = Material.Dummy
+                                normal = normal; frontFace = false
+                            }
                     )
                 
             

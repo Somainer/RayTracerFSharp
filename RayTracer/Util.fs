@@ -3,12 +3,14 @@ module RayTracer.Util
 open System
 open System.Runtime.CompilerServices
 
+open RayTracer.Numerics
+
 let inline clamp x min max =
     if x < min then min
     else if x > max then max
     else x
 
-let inline replaceNaN c = if Double.IsNaN c then 0.0 else c
+let inline replaceNaN c = if isNaN c then 0.0 else c
 
 let gammaCorrection c scale = Math.Sqrt (replaceNaN(c) * scale)
 

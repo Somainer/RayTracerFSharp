@@ -96,6 +96,20 @@ type Vec3d with
         
     member self.reflect n =
         self - 2.0 * self.dot(n) * n
+        
+    member self.refract (n : Vec3d) (ratio : float) =
+        let cosTheta =
+            (-self).dot(n)
+            |> min 1.0
+        let rOutPerpendicular = ratio * (self + cosTheta * n)
+        let rOutParallel =
+            1.0 - rOutPerpendicular.normSquared
+            |> abs
+            |> sqrt
+            |> neg
+            |> (*) n
+            
+        rOutPerpendicular + rOutParallel
 
 
 type Point3d = Vec3d

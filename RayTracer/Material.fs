@@ -1,5 +1,6 @@
 namespace rec RayTracer.Material
 
+open System
 open System.Runtime.CompilerServices
 open RayTracer
 open RayTracer.Texture
@@ -11,6 +12,7 @@ type HitRecord = {
     t: double
     u: double; v: double
     material: Material
+    frontFace: bool
 }
 module HitRecord =
     let inline withMaterial (material : Material) record =
@@ -27,6 +29,7 @@ module HitRecord =
             t = t
             u = u; v = v
             material = material
+            frontFace = frontFace
         }
 
 [<AbstractClass>]
@@ -77,3 +80,35 @@ module Material =
             member _.scatter(_, _) = ValueNone
             member _.emitted _ _ _ = Vec3d.zero
     }
+
+type Dielectric (indexRefraction) =
+    inherit Material ()
+    static member reflectance cosine refIdx =
+        let r = (1.0 - refIdx) / (1.0 + refIdx)
+        let r0 = r * r
+        
+        r0 + (1.0 - r0) * Math.Pow(1.0 - cosine, 5.0)
+
+    override this.emitted _ _ _ = Vec3d.zero
+    override self.scatter(rayIn, hitRecord) =
+        let refractionRatio =
+            if hitRecord.frontFace then 1.0 / indexRefraction
+            else indexRefraction
+        let unitRedirection = rayIn.direction.normalized
+        let cosTheta =
+            ((-unitRedirection).dot(hitRecord.normal))
+            |> min 1.0
+        let sinTheta = sqrt (1.0 - cosTheta * cosTheta)
+        
+        let fullReflect = refractionRatio * sinTheta > 1.0
+        let direction =
+            if fullReflect || Dielectric.reflectance cosTheta refractionRatio > RandomGenerator.nextDouble() then
+                unitRedirection.reflect hitRecord.normal
+            else unitRedirection.refract hitRecord.normal refractionRatio
+        
+        let ray = {
+            rayIn with
+                origin = hitRecord.point
+                direction = direction
+        }
+        ValueSome (Vec3d.only 1.0, ray)

@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Numerics.fs" />
     <Compile Include="RandomGenerator.fs" />
     <Compile Include="Object.fs" />
     <Compile Include="Util.fs" />
