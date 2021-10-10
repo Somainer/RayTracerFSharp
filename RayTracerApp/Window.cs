@@ -32,6 +32,8 @@ namespace RayTracer
 
         private int vertexArray;
 
+        private int backgroundTexture;
+
 #pragma warning disable CS8618 // _shader will always be constructed in OnLoad.
         private Window(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings, Scene scene)
 #pragma warning restore CS8618
@@ -133,7 +135,8 @@ namespace RayTracer
                     }
                 }
             
-                var backgroundTexture = GL.GenTexture();
+                GL.DeleteTexture(backgroundTexture);
+                backgroundTexture = GL.GenTexture();
 
                 GL.ActiveTexture(TextureUnit.Texture0);
                 GL.BindTexture(TextureTarget.Texture2D, backgroundTexture);
@@ -153,7 +156,6 @@ namespace RayTracer
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
         
             SwapBuffers();
-            GL.DeleteTexture(0);
             
             base.OnRenderFrame(args);
         }
