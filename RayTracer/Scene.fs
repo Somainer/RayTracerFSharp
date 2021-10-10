@@ -102,3 +102,30 @@ type Scene = {
 
         doneCallback.Invoke(image.Cast() |> Array.ofSeq)
         printfn $"Render completed in {watch.Elapsed}"
+
+    member self.EvolvingRendering (callback : Action<int, int, Color>) (doneCallback : Action<int, Color3d[,], Action>) =
+        let bvh = self.bvh
+        let image  = Array2D.create self.height self.width Vec3d.zero
+        
+        let watch = Stopwatch.StartNew()
+        let mutable spp = 0
+        let mutable shouldRun = true
+        
+        let stop = Action(fun () -> shouldRun <- false)
+        
+        while shouldRun do
+            spp <- spp + 1
+            Parallel.For(0, self.height,
+                Action<_> (fun j ->
+                    Parallel.For(0, self.width,
+                        Action<_> (fun i ->
+                            let pixel =
+                                self.renderSingle bvh i j
+                            let lastPixel = Array2D.get image j i
+                            let final = (pixel + lastPixel * (float (spp - 1))) / float spp
+                            Array2D.set image j i final
+                            let color = Color.correctedColor final
+                            callback.Invoke(j, i, color)
+                    )) |> ignore)) |> ignore
+            doneCallback.Invoke(spp, image, stop)
+            printf $"Spp: {spp} Elapsed: {watch.Elapsed}\r"

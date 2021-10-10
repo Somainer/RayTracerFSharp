@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
@@ -33,6 +34,9 @@ namespace RayTracer
         private int vertexArray;
 
         private int backgroundTexture;
+
+        private Action stopRendering;
+        private Vec3d[,] colorBuffer;
 
 #pragma warning disable CS8618 // _shader will always be constructed in OnLoad.
         private Window(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings, Scene scene)
@@ -86,6 +90,11 @@ namespace RayTracer
             Task.Run(() =>
             {
                 Console.WriteLine($"Rendering {Scene.width}x{Scene.height} image with spp = {Scene.spp}.");
+                Scene.EvolvingRendering(RenderCallback, (_, color, action) =>
+                {
+                    stopRendering = action;
+                    colorBuffer = color;
+                });
                 Scene.RenderWithCallback(RenderCallback, MarkIsDone);
             });
             base.OnLoad();
@@ -110,6 +119,12 @@ namespace RayTracer
             {
                 // If it is, close the window.
                 Close();
+            }
+
+            if (KeyboardState.IsKeyDown(Keys.Enter))
+            {
+                stopRendering?.Invoke();
+                MarkIsDone(colorBuffer.Cast<Vec3d>().ToArray());
             }
 
             base.OnUpdateFrame(e);
