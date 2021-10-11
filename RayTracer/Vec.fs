@@ -88,6 +88,7 @@ type Vec3d with
             (self.x * rhs.y - self.y * rhs.x)
     
     static member op_Implicit self = Vector3(float32 self.x, float32 self.y, float32 self.z)
+    static member op_Implicit (vec3 : Vector3) = Vec3d.make (float vec3.X) (float vec3.Y) (float vec3.Z) 
     
     member self.nearZero =
         Util.nearZero self.x

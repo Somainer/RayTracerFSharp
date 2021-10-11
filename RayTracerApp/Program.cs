@@ -4,7 +4,8 @@ namespace RayTracer
     {
         public static void Main(string[] args)
         {
-            var scene = Samples.randomScene();
+            // var scene = Samples.randomScene();
+            var scene = Samples.getBunny();
 
             using var window = Window.ForScene(scene);
             window.Run();

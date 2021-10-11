@@ -95,7 +95,7 @@ namespace RayTracer
                     stopRendering = action;
                     colorBuffer = color;
                 });
-                Scene.RenderWithCallback(RenderCallback, MarkIsDone);
+                // Scene.RenderWithCallback(RenderCallback, MarkIsDone);
             });
             base.OnLoad();
         }

@@ -4,6 +4,9 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
 	<IlcDisableReflection>true</IlcDisableReflection>
+	<IlcOptimizationPreference>Speed</IlcOptimizationPreference>
+	<IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
+	<InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,13 +30,14 @@
     <Compile Include="Render.fs" />
     <Compile Include="RenderResult.fs" />
     <Compile Include="Scene.fs" />
+    <Compile Include="Mesh\WavefrontMesh.fs" />
+    <Compile Include="Mesh\Mesh.fs" />
     <Compile Include="Samples.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="7.0.0-alpha.1.21504.4" />
-    <PackageReference Include="OBJ3DWavefrontLoader" Version="1.0.3" />
+    <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="7.0.0-alpha.1.21510.3" />
   </ItemGroup>
 
   <ItemGroup>

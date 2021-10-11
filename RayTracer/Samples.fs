@@ -2,6 +2,7 @@ module RayTracer.Samples
 
 open RayTracer.Intersectable
 open RayTracer.Material
+open RayTracer.Mesh
 open RayTracer.Texture
 
 let randomScene () =
@@ -46,7 +47,7 @@ let randomScene () =
     let lookAt = Vec3d.make 0.0 0.0 0.0
     let vup = Vec3d.make 0.0 1.0 0.0
     let distToFocus = 10.0
-    let aperture = 0.0
+    let aperture = 0.1
     
     let cam = Camera.create lookFrom lookAt vup ratio (Angle.Degree 20.0) aperture distToFocus 0.0 0.0
     let background = Vec3d.make 0.7 0.8 1.0
@@ -58,3 +59,32 @@ let randomScene () =
         objects = Array.ofSeq world
     }
     
+let getBunny() =
+    let ratio = 3.0 / 2.0
+    let width = 1200
+    let height =
+        double width / ratio
+        |> int
+    let spp = 50
+    let lookFrom = Vec3d.make 0.76 0.86 0.62
+    let lookAt = Vec3d.make 0.0 0.2 0.0
+    let vup = Vec3d.make 0.0 1.0 0.0
+    let distToFocus = 10.0
+    let aperture = 0.1
+
+    let cam = Camera.create lookFrom lookAt vup ratio (Angle.Degree 20.0) aperture distToFocus 0.0 0.0
+    let background = Vec3d.make 0.7 0.8 1.0
+    let bunny = Mesh.load "bunny.obj" cam.shutterOpen cam.shutterClose
+    
+    let mat = Diffuse(SolidColor(Vec3d.make 0.7 0.6 0.5))
+    
+    let ground = Diffuse (SolidColor(Vec3d.make 0.5 0.5 0.5))
+    let groundSphere = Sphere(Vec3d.make 0.0 -1000.0 0.0, 1000.0, ground)
+     
+    {
+        Scene.camera = cam
+        background = background
+        spp = spp
+        width = width; height = height
+        objects = [| bunny.withMaterial mat; |]
+    }
